@@ -15,7 +15,7 @@ class BinaryTree:
     @property
     def count(self):
         """
-        Свойство которое возвращает общее количество узлов в бинарном дереве.
+        Свойство, которое возвращает общее количество узлов в бинарном дереве.
         """
         return f'Общее количество узлов в бинарном дереве равно {self.__count}'
 
@@ -37,17 +37,6 @@ class BinaryTree:
         else:
             self.__root = Node(value)
             self.__count += 1
-
-    def __count_nodes(self, node=None):
-        if node is None:
-            node = self.__root
-            self.__count = 0
-        if node:
-            self.__count += 1
-            if node.left:
-                self.__count_nodes(node.left)
-            if node.right:
-                self.__count_nodes(node.right)
 
     def delete(self, value):
         """
@@ -115,7 +104,7 @@ class BinaryTree:
 
 class Node:
     """
-    Звено бинарного дерева
+    Класс Node, которое создает звено бинарного дерева
     """
     __slots__ = 'data', 'left', 'right'  # Запрещает создавать другие переменные
 

@@ -63,7 +63,10 @@ class BinaryTree:
                     else:
                         parent_min_value_node.right = min_value_node.right
                 else:
-                    parent_min_value_node.right = None
+                    if parent_min_value_node.left == min_value_node:
+                        parent_min_value_node.left = None
+                    else:
+                        parent_min_value_node.right = None
             else:  # если удаляемое звено имеет только 1 ребенка
                 child_node = search_node.left or search_node.right
                 if parent_node:

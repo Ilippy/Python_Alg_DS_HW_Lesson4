@@ -43,18 +43,18 @@ class BinaryTree:
         Поиск и удаление звена дерева по значению.
         """
         search_node, parent_node = self.search(self.__root, value)
-        if search_node:
+        if search_node and isinstance(search_node, Node):
             if search_node.left is None and search_node.right is None:  # если удаляемое звено листок
                 self.__delete_node_without_child(search_node, parent_node)
             elif search_node.left and search_node.right:                # если удаляемое звено имеет 2 детей
-                self.__delete_node_with_two_children(search_node, parent_node)
+                self.__delete_node_with_two_children(search_node)
             else:                                                       # если удаляемое звено имеет только 1 ребенка
                 self.__delete_node_with_single_child(search_node, parent_node)
             self.__count -= 1
         else:
             print(f"Число {value} не найдено в дереве")
 
-    def __delete_node_with_two_children(self, delete_node, parent_node):
+    def __delete_node_with_two_children(self, delete_node):
         """
         Удаление звена с 2 детьми
         """

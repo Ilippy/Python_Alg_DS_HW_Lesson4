@@ -1,5 +1,9 @@
 class BinaryTree:
-    __slots__ = '__root', '__count'     # Запрещает создавать другие переменные
+    """
+    Класс BinaryTree создает бинарное дерево, которому характерно наличии двух потомков,
+    где левый меньше родителя, а правый – больше.
+    """
+    __slots__ = '__root', '__count'  # Запрещает создавать другие переменные
 
     def __init__(self, root_value):
         self.__root = Node(root_value)
@@ -10,23 +14,29 @@ class BinaryTree:
 
     @property
     def count(self):
-        return f'Общее количество узлова в бинарном дереве равно {self.__count}'
+        """
+        Свойство которое возвращает общее количество узлов в бинарном дереве.
+        """
+        return f'Общее количество узлов в бинарном дереве равно {self.__count}'
 
     def add(self, value):
-        temp_value = value.data if isinstance(value, Node) else value
+        """
+        Добавляет звено в дерево
+        """
         if self.__root:
-            res = self.search(self.__root, temp_value)
-            if res[0] is None:
-                new_node = value if isinstance(value, Node) else Node(value)
-                if temp_value > res[1].data:
-                    res[1].right = new_node
+            search_node, parent_node = self.search(self.__root, value)
+            if search_node is None:
+                new_node = Node(value)
+                if value > parent_node.data:
+                    parent_node.right = new_node
                 else:
-                    res[1].left = new_node
+                    parent_node.left = new_node
                 self.__count += 1
             else:
                 print(f"Число {value} уже есть в дереве")
         else:
             self.__root = Node(value)
+            self.__count += 1
 
     def __count_nodes(self, node=None):
         if node is None:
@@ -40,24 +50,49 @@ class BinaryTree:
                 self.__count_nodes(node.right)
 
     def delete(self, value):
-        if self.__root.data == value:
-            self.__root = None
-            self.__count = 0
+        """
+        Удаление звена дерева по значению.
+        """
+        search_node, parent_node = self.search(self.__root, value)
+        if search_node:
+            if search_node.left is None and search_node.right is None:  # если удаляемое звено листок
+                if parent_node:
+                    if parent_node.left == search_node:
+                        parent_node.left = None
+                    else:
+                        parent_node.right = None
+                else:
+                    self.__root = None
+            elif search_node.left and search_node.right:  # если удаляемое звено имеет 2 детей
+                min_value_node, parent_min_value_node = self.__find_min_value(search_node.right)
+                if parent_min_value_node is None:
+                    parent_min_value_node = search_node
+                search_node.data = min_value_node.data
+                if min_value_node.right:
+                    if parent_min_value_node.left == min_value_node:
+                        parent_min_value_node.left = min_value_node.right
+                    else:
+                        parent_min_value_node.right = min_value_node.right
+                else:
+                    parent_min_value_node.right = None
+            else:  # если удаляемое звено имеет только 1 ребенка
+                child_node = search_node.left or search_node.right
+                if parent_node:
+                    if parent_node.left == search_node:
+                        parent_node.left = child_node
+                    else:
+                        parent_node.right = child_node
+                else:
+                    self.__root = child_node
+            self.__count -= 1
         else:
-            res = self.search(self.__root, value)
-            if res[0]:
-                if res[1].left == res[0]:
-                    res[1].left = None
-                if res[1].right == res[0]:
-                    res[1].right = None
-                self.__count_nodes()
-            else:
-                print(f"Число {value} не найдено в дереве")
+            print(f"Число {value} не найдено в дереве")
 
     def search(self, node, value, parent=None):
         """
         Рекурсивный поиск значения в дереве.
-        Возвращает tuple из звена дерава и его предка.
+        Если найдено звено со входящем значением, то возврашает это звено и его родителя.
+        Иначе возвращает None и ближайшее звено по входящему значению.
         """
         if node is None or value == node.data:
             return node, parent
@@ -66,9 +101,23 @@ class BinaryTree:
         if value < node.data:
             return self.search(node.left, value, node)
 
+    def __find_min_value(self, node):
+        """
+        Поиск звена по минимальному значению
+        """
+        cur_node = node
+        parent_node = None
+        while cur_node.left:
+            parent_node = cur_node
+            cur_node = cur_node.left
+        return cur_node, parent_node
+
 
 class Node:
-    __slots__ = 'data', 'left', 'right'     # Запрещает создавать другие переменные
+    """
+    Звено бинарного дерева
+    """
+    __slots__ = 'data', 'left', 'right'  # Запрещает создавать другие переменные
 
     def __init__(self, data: int):
         self.data = data

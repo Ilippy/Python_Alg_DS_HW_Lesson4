@@ -40,45 +40,57 @@ class BinaryTree:
 
     def delete(self, value):
         """
-        Удаление звена дерева по значению.
+        Поиск и удаление звена дерева по значению.
         """
         search_node, parent_node = self.search(self.__root, value)
         if search_node:
             if search_node.left is None and search_node.right is None:  # если удаляемое звено листок
-                if parent_node:
-                    if parent_node.left == search_node:
-                        parent_node.left = None
-                    else:
-                        parent_node.right = None
-                else:
-                    self.__root = None
-            elif search_node.left and search_node.right:  # если удаляемое звено имеет 2 детей
-                min_value_node, parent_min_value_node = self.__find_min_value(search_node.right)
-                if parent_min_value_node is None:
-                    parent_min_value_node = search_node
-                search_node.data = min_value_node.data
-                if min_value_node.right:
-                    if parent_min_value_node.left == min_value_node:
-                        parent_min_value_node.left = min_value_node.right
-                    else:
-                        parent_min_value_node.right = min_value_node.right
-                else:
-                    if parent_min_value_node.left == min_value_node:
-                        parent_min_value_node.left = None
-                    else:
-                        parent_min_value_node.right = None
-            else:  # если удаляемое звено имеет только 1 ребенка
-                child_node = search_node.left or search_node.right
-                if parent_node:
-                    if parent_node.left == search_node:
-                        parent_node.left = child_node
-                    else:
-                        parent_node.right = child_node
-                else:
-                    self.__root = child_node
+                self.__delete_node_without_child(search_node, parent_node)
+            elif search_node.left and search_node.right:                # если удаляемое звено имеет 2 детей
+                self.__delete_node_with_two_children(search_node, parent_node)
+            else:                                                       # если удаляемое звено имеет только 1 ребенка
+                self.__delete_node_with_single_child(search_node, parent_node)
             self.__count -= 1
         else:
             print(f"Число {value} не найдено в дереве")
+
+    def __delete_node_with_two_children(self, delete_node, parent_node):
+        """
+        Удаление звена с 2 детьми
+        """
+        min_value_node, parent_min_value_node = self.__find_min_value(delete_node.right)
+        if parent_min_value_node is None:
+            parent_min_value_node = delete_node
+        delete_node.data = min_value_node.data
+        if min_value_node.right:
+            self.__delete_node_with_single_child(min_value_node, parent_min_value_node)
+        else:
+            self.__delete_node_without_child(min_value_node, parent_min_value_node)
+
+    def __delete_node_without_child(self, delete_node, parent_node):
+        """
+        Удаление звена без детей
+        """
+        if parent_node:
+            if parent_node.left == delete_node:
+                parent_node.left = None
+            else:
+                parent_node.right = None
+        else:
+            self.__root = None
+
+    def __delete_node_with_single_child(self, delete_node, parent_node):
+        """
+        Удаление звена с 1 ребенком
+        """
+        child_node = delete_node.left or delete_node.right
+        if parent_node:
+            if parent_node.left == delete_node:
+                parent_node.left = child_node
+            else:
+                parent_node.right = child_node
+        else:
+            self.__root = child_node
 
     def search(self, node, value, parent=None):
         """

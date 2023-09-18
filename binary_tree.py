@@ -24,7 +24,7 @@ class BinaryTree:
         Добавляет звено в дерево
         """
         if self.__root:
-            search_node, parent_node = self.search(self.__root, value)
+            search_node, parent_node = self.__search(self.__root, value)
             if search_node is None:
                 new_node = Node(value)
                 if value > parent_node.data:
@@ -42,7 +42,7 @@ class BinaryTree:
         """
         Поиск и удаление звена дерева по значению.
         """
-        search_node, parent_node = self.search(self.__root, value)
+        search_node, parent_node = self.__search(self.__root, value)
         if search_node and isinstance(search_node, Node):
             if search_node.left is None and search_node.right is None:  # если удаляемое звено листок
                 self.__delete_node_without_child(search_node, parent_node)
@@ -92,7 +92,7 @@ class BinaryTree:
         else:
             self.__root = child_node
 
-    def search(self, node, value, parent=None):
+    def __search(self, node, value, parent=None):
         """
         Рекурсивный поиск значения в дереве.
         Если найдено звено со входящем значением, то возврашает это звено и его родителя.
@@ -101,9 +101,9 @@ class BinaryTree:
         if node is None or value == node.data:
             return node, parent
         if value > node.data:
-            return self.search(node.right, value, node)
+            return self.__search(node.right, value, node)
         if value < node.data:
-            return self.search(node.left, value, node)
+            return self.__search(node.left, value, node)
 
     def __find_min_value(self, node):
         """
